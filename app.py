@@ -1,23 +1,9 @@
-"""
-ADK-style Conversational Game Referee
-Rock–Paper–Scissors–Plus (Best of 3)
-
-NOTE:
-Google ADK is not publicly installable.
-This file implements a minimal local abstraction
-that mirrors ADK concepts: Agent, Tool, State.
-"""
-
 import random
 from dataclasses import dataclass
 from typing import Dict, Literal, Callable
 
 Move = Literal["rock", "paper", "scissors", "bomb", "invalid"]
 
-
-# ======================
-# Minimal ADK-like layer
-# ======================
 
 def tool(func: Callable) -> Callable:
     """Decorator to mark a function as a tool."""
@@ -30,10 +16,6 @@ class BaseAgent:
         self.name = name
 
 
-# ======================
-# Game State
-# ======================
-
 @dataclass
 class GameState:
     round_number: int = 1
@@ -43,10 +25,6 @@ class GameState:
     bot_bomb_used: bool = False
     game_over: bool = False
 
-
-# ======================
-# Tools
-# ======================
 
 @tool
 def validate_move(move: str, bomb_used: bool) -> Move:
@@ -110,10 +88,6 @@ def update_game_state(
     return state
 
 
-# ======================
-# Agent
-# ======================
-
 class GameRefereeAgent(BaseAgent):
     def __init__(self):
         super().__init__(name="game_referee")
@@ -121,7 +95,7 @@ class GameRefereeAgent(BaseAgent):
 
     def explain_rules(self) -> str:
         return (
-            "🎮 Rock–Paper–Scissors–Plus\n"
+            " Rock–Paper–Scissors–Plus\n"
             "• Best of 3 rounds\n"
             "• Moves: rock, paper, scissors, bomb\n"
             "• Bomb beats all (one-time use)\n"
@@ -148,22 +122,22 @@ class GameRefereeAgent(BaseAgent):
         )
 
         response = [
-            f"🔔 Round {self.state['round_number'] - 1}",
-            f"👉 You played: {user_move}",
-            f"🤖 Bot played: {bot_move}",
+            f" Round {self.state['round_number'] - 1}",
+            f" You played: {user_move}",
+            f" Bot played: {bot_move}",
         ]
 
         if user_move == "invalid":
-            response.append("⚠️ Invalid move — round wasted.")
+            response.append(" Invalid move — round wasted.")
         elif winner == "draw":
-            response.append("🤝 Draw this round.")
+            response.append(" Draw this round.")
         elif winner == "user":
-            response.append("🎉 You win the round!")
+            response.append(" You win the round!")
         else:
-            response.append("💥 Bot wins the round.")
+            response.append(" Bot wins the round.")
 
         response.append(
-            f"📊 Score — You: {self.state['user_score']} | Bot: {self.state['bot_score']}"
+            f" Score — You: {self.state['user_score']} | Bot: {self.state['bot_score']}"
         )
 
         if self.state["game_over"]:
@@ -175,15 +149,12 @@ class GameRefereeAgent(BaseAgent):
 
     def final_result(self) -> str:
         if self.state["user_score"] > self.state["bot_score"]:
-            return "🏆 Final Result: You win the game!"
+            return " Final Result: You win the game!"
         elif self.state["bot_score"] > self.state["user_score"]:
-            return "🤖 Final Result: Bot wins the game!"
-        return "🤝 Final Result: It's a draw!"
+            return " Final Result: Bot wins the game!"
+        return " Final Result: It's a draw!"
 
 
-# ======================
-# CLI Loop
-# ======================
 
 if __name__ == "__main__":
     agent = GameRefereeAgent()
